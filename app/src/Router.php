@@ -24,7 +24,7 @@ class Router
     {
         $this->dispatcher = FastRoute\simpleDispatcher(function(FastRoute\RouteCollector $r) {
             // Main route - home page
-            $r->addRoute(['GET','POST'], '/', function() {
+            $r->addRoute('GET', '/', function() {
                 require_once __DIR__ . '/../config.php';
                 require_once __DIR__ . '/../inc/Cache.php';
                 require_once __DIR__ . '/../inc/Language.php';
@@ -44,8 +44,8 @@ class Router
                 }
                 
                 // Process form submission
-                if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['url'])) {
-                    $originalUrl = trim($_POST['url']);
+                if (isset($_GET['url'])) {
+                    $originalUrl = trim($_GET['url']);
                     if (filter_var($originalUrl, FILTER_VALIDATE_URL)) {
                         $sanitizedUrl = $this->sanitizeUrl($originalUrl);
                         if (!empty($sanitizedUrl)) {
@@ -53,6 +53,7 @@ class Router
                             exit;
                         }
                     }
+                    $url = $originalUrl;
                     $messageData = \Inc\Language::getMessage('INVALID_URL');
                     $message = $messageData['message'];
                     $message_type = $messageData['type'];
